@@ -22,8 +22,34 @@ connection.connect(function(err) {
     connection.query("SELECT * from products", function(err, result) {
 
     if (err) throw err;
-    console.log("Result:\n", result);
 
+    console.log(" ");
+
+    for (let i = 0; i < result.length; i++) {
+        console.log("---------------------------------------");
+        console.log("Item #: ", result[i].item_id);
+        console.log("Product: ", result[i].product_name);
+        console.log("Department: ", result[i].department_name);
+        console.log("Price: $", result[i].price);
+        console.log("In stock: ", result[i].stock_quantity);
+        console.log("---------------------------------------\n");
+    }
+
+    // inquirer.prompt([
+    //     {
+    //       type: "input"
+    //       , name: "itemNumber"
+    //       , message: "Please enter the item number of the item you'd like to purchase:"
+    //     }
+    //     , {
+    //       type: "input"
+    //       , name: "itemAmount"
+    //       , message: "How many would you like to purchase?"
+    //     }
+  
+    // ]).then(function(user){
+    //     connection.query("SELECT * from products WHERE item_id = " + "'" + itemNumber + "'", function(err, result) {});
+    // });
 });
 
 connection.end();
