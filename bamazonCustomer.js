@@ -2,6 +2,7 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
+
     host: "localhost",
   
     // Your port; if not 3306
@@ -16,41 +17,62 @@ var connection = mysql.createConnection({
 });
 
 connection.connect(function(err) {
+
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
+});
+
+function displayProducts() {
 
     connection.query("SELECT * from products", function(err, result) {
 
-    if (err) throw err;
+        if (err) throw err;
 
-    console.log(" ");
+        console.log(" ");
 
-    for (let i = 0; i < result.length; i++) {
-        console.log("---------------------------------------");
-        console.log("Item #: ", result[i].item_id);
-        console.log("Product: ", result[i].product_name);
-        console.log("Department: ", result[i].department_name);
-        console.log("Price: $", result[i].price);
-        console.log("In stock: ", result[i].stock_quantity);
-        console.log("---------------------------------------\n");
-    }
+        for (let i = 0; i < result.length; i++) {
+            console.log("---------------------------------------");
+            console.log("Item #: ", result[i].item_id);
+            console.log("Product: ", result[i].product_name);
+            console.log("Department: ", result[i].department_name);
+            console.log("Price: $", result[i].price);
+            console.log("In stock: ", result[i].stock_quantity);
+            console.log("---------------------------------------\n");
+        }
+    });
+}
 
-    // inquirer.prompt([
-    //     {
-    //       type: "input"
-    //       , name: "itemNumber"
-    //       , message: "Please enter the item number of the item you'd like to purchase:"
-    //     }
-    //     , {
-    //       type: "input"
-    //       , name: "itemAmount"
-    //       , message: "How many would you like to purchase?"
-    //     }
-  
-    // ]).then(function(user){
-    //     connection.query("SELECT * from products WHERE item_id = " + "'" + itemNumber + "'", function(err, result) {});
-    // });
-});
+displayProducts();
+
+selectProduct();
+
+function selectProduct(selection) {
+
+    inquirer.prompt([
+        {
+        type: "input"
+        , name: "itemNumber"
+        , message: "Please enter the item number of the item you'd like to purchase:"
+        }
+        , {
+        type: "input"
+        , name: "itemCount"
+        , message: "How many would you like to purchase?"
+        }
+
+    ]).then(function(selection) {
+
+        connection.query("SELECT * from products WHERE ?", {item_id: selection.itemNumber}, function(err, result) {
+            if (err) throw err;
+
+            if (parseInt(selection.itemCount) > result[0].stock_quantity) {
+
+                console.log("Insufficient quantity available. There are only " + result[0].stock_quantity + " of that item in stock at this time.");
+                selectProduct();
+            };
+        });
+    });
+}
+
 
 connection.end();
-});
