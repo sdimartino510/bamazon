@@ -74,6 +74,7 @@ function selectProduct() {
                     if (err) throw err;
                     console.log("Rows Affected: " + res.affectedRows);
                     console.log("You have purchased " + result[0].product_name + " for $" + result[0].price);
+                    connection.end();
                 });
             }
         });
