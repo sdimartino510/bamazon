@@ -70,10 +70,10 @@ function selectProduct() {
                 console.log("Insufficient quantity available. There are only " + result[0].stock_quantity + " of that item in stock at this time.");
                 selectProduct();
             } else {
-                connection.query("UPDATE products SET stock_quantity = ? WHERE ?", [(parseInt(result[0].stock_quantity) - parseInt(selection.itemCount)), {item_id: selection.itemNumber}], function(err, result) {
+                connection.query("UPDATE products SET stock_quantity = ? WHERE ?", [(parseInt(result[0].stock_quantity) - parseInt(selection.itemCount)), {item_id: selection.itemNumber}], function(err, res) {
                     if (err) throw err;
-                    console.log("Rows Affected: " + result.affectedRows);
-                    console.log("You have purchased " + selection.product_name + " for $" + selection.price);
+                    console.log("Rows Affected: " + res.affectedRows);
+                    console.log("You have purchased " + result[0].product_name + " for $" + result[0].price);
                 });
             }
         });
