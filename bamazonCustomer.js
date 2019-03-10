@@ -19,8 +19,10 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
 
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
+
 });
+
+
 
 function displayProducts() {
 
@@ -39,22 +41,20 @@ function displayProducts() {
             console.log("In stock: ", result[i].stock_quantity);
             console.log("---------------------------------------\n");
         }
+        selectProduct();
     });
 }
 
-displayProducts();
 
-selectProduct();
 
-function selectProduct(selection) {
-
+function selectProduct() {
     inquirer.prompt([
         {
         type: "input"
         , name: "itemNumber"
         , message: "Please enter the item number of the item you'd like to purchase:"
-        }
-        , {
+        },
+        {
         type: "input"
         , name: "itemCount"
         , message: "How many would you like to purchase?"
@@ -69,10 +69,17 @@ function selectProduct(selection) {
 
                 console.log("Insufficient quantity available. There are only " + result[0].stock_quantity + " of that item in stock at this time.");
                 selectProduct();
-            };
+            } else {
+                connection.query("UPDATE products SET stock_quantity = ? WHERE ?", [(parseInt(result[0].stock_quantity) - parseInt(selection.itemCount)), {item_id: selection.itemNumber}], function(err, result) {
+                    if (err) throw err;
+                    console.log("Rows Affected: " + result.affectedRows);
+                    console.log("You have purchased " + selection.product_name + " for $" + selection.price);
+                });
+            }
         });
     });
 }
 
+displayProducts();
 
-connection.end();
+// connection.end();
