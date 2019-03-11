@@ -73,7 +73,7 @@ function selectProduct() {
                 connection.query("UPDATE products SET stock_quantity = ? WHERE ?", [(parseInt(result[0].stock_quantity) - parseInt(selection.itemCount)), {item_id: selection.itemNumber}], function(err, res) {
                     if (err) throw err;
                     console.log("Rows Affected: " + res.affectedRows);
-                    console.log("You have purchased " + result[0].product_name + " for $" + result[0].price);
+                    console.log("You have purchased " + selection.itemCount + " " + result[0].product_name + " for $" + result[0].price + " each.");
                     connection.end();
                 });
             }
